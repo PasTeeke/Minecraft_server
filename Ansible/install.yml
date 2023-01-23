@@ -1,0 +1,10 @@
+- hosts: serveur_minecraft
+  become: yes
+  tasks:
+  - name: "Update system"
+    apt: 
+      name: "*"
+      state: latest
+      update_cache: yes
+  - name
+  
