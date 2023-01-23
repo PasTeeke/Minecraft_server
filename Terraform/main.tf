@@ -91,7 +91,7 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
 }
 
 resource "aws_elb" "elb_minecraft" {
-  name               = "elb_minecraft"
+  name               = "elbminecraft"
   internal           = false
   subnets = [aws_subnet.public_subnet_minecraft.id]
   security_groups = [aws_security_group.security_group_elb_minecraft.id]
