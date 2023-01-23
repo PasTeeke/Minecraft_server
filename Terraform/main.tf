@@ -78,7 +78,7 @@ resource "aws_launch_configuration" "launch_configuration_minecraft" {
 
 resource "aws_autoscaling_group" "autoscaling_minecraft" {
   name                 = "autoscaling_minecraft"
-  launch_configuration = aws_launch_configuration.autoscaling_minecraft.id
+  launch_configuration = aws_launch_configuration.launch_configuration_minecraft.id
   min_size             = 1
   max_size             = 1
   desired_capacity     = 1
