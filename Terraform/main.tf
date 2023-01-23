@@ -148,6 +148,7 @@ resource "aws_elb_attachment" "elb_attachment_minecraft" {
 resource "aws_security_group" "security_group_elb_minecraft" {
   name        = "security_group_elb_minecraft"
   description = "Security group_elb_minecraft"
+  vpc_id = aws_vpc.VPC_minecraft.id
 
  
 
