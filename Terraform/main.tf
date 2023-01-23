@@ -95,7 +95,6 @@ resource "aws_elb" "elb_minecraft" {
   internal           = false
   subnets = [aws_subnet.public_subnet_minecraft.id]
   security_groups = [aws_security_group.security_group_elb_minecraft.id]
-  enable_deletion_protection = false
 
   listener {
     instance_port     = 25565
