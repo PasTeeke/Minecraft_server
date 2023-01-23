@@ -1,8 +1,5 @@
 resource "aws_vpc" "VPC_Minecraft" {
   cidr_block = "10.0.0.0/16"
-  enable_network_address_usage_metrics = false
-  enable_dns_support  = true
-  enable_dns_hostnames = true
 
   tags = {
     Name = "terraform_vpc"
@@ -77,7 +74,7 @@ resource "aws_autoscaling_group" "autoscaling_Minecraft" {
   name                 = "autoscaling_Minecraft"
   launch_configuration = aws_launch_configuration.autoscaling_Minecraft.name
   min_size             = 1
-  max_size             = 2
+  max_size             = 1
   desired_capacity     = 1
   vpc_zone_identifier  = [aws_subnet.public_subnet_Minecraft.id, aws_subnet.private_subnet_Minecraft.id]
 
