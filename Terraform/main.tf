@@ -72,7 +72,7 @@ resource "aws_instance" "instance_minecraft" {
 
 resource "aws_launch_configuration" "launch_configuration_minecraft" {
   name          = "launch_configuration_minecraft"
-  image_id = aws_ami.instance.id
+  image_id = "ami-0778521d914d23bc1"
   instance_type = "t3.large"
 }
 
