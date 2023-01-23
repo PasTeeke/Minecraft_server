@@ -5,10 +5,6 @@ all:
         ansible_user: "ubuntu"
         ansible_host: "15.237.117.75"
     children:
-      webserver:
+      Minecraft:
         hosts:
-          web1:
-          web2:
-      lb:
-        hosts:
-          lb-1:
+          server1:
