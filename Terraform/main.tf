@@ -61,7 +61,7 @@ resource "aws_nat_gateway" "nat_gateway_minecraft" {
 }
 
 resource "aws_instance" "instance_minecraft" {
-  ami           = "ami-0de3167fef21b4c0d" 
+  ami           = "ami-0778521d914d23bc1" 
   instance_type = "t3.large"
 
   tags = {
@@ -72,6 +72,7 @@ resource "aws_instance" "instance_minecraft" {
 
 resource "aws_launch_configuration" "launch_configuration_minecraft" {
   name          = "launch_configuration_minecraft"
+  image_id = aws_ami.instance.id
   instance_type = "t3.large"
 }
 
