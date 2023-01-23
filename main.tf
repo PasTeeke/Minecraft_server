@@ -85,8 +85,18 @@ resource "aws_autoscaling_group" "autoscaling_Minecraft" {
 }
 
 resource "aws_elb" "elb_Minecraft" {
+  name               = "elb_Minecraft"
+  internal           = false
   subnets = [aws_subnet.public_subnet_Minecraft.id]
   security_groups = [aws_security_group.elb_Minecraft.id]
+  enable_deletion_protection = false
+
+  listener {
+    instance_port     = 25565
+    instance_protocol = "tcp"
+    lb_port           = 25565
+    lb_protocol       = "tcp"
+  }
 
   tags = {
       Name = "terraform_elb"
@@ -94,13 +104,18 @@ resource "aws_elb" "elb_Minecraft" {
   }
 }
 
+resource "aws_elb_attachment" "elb_attachment_Minecraft" {
+  elb      = aws_elb.elb_Minecraft.id
+  instance = aws_instance.instance_Minecraft.id
+}
+
 resource "aws_security_group" "security_group_elb_Minecraft" {
   name        = "security_group_elb_Minecraft"
   description = "Security group_elb_Minecraft"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 25565
+    to_port     = 25565
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
