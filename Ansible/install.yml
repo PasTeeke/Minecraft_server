@@ -6,5 +6,30 @@
       name: "*"
       state: latest
       update_cache: yes
-  - name
-  
+  - name: Installer Java
+  become: true
+  apt:
+    name: openjdk-11-jre-headless
+    state: present
+
+- name: Télécharger et décompresser le serveur Minecraft
+  become: true
+  unarchive:
+    src: https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar
+    dest: /opt/minecraft
+    remote_src: true
+    creates: /opt/minecraft/server.jar
+
+- name: Créer un utilisateur pour le serveur Minecraft
+  become: true
+  user:
+    name: minecraft
+    shell: /bin/bash
+    home: /opt/minecraft
+
+- name: Lancer le serveur Minecraft
+  become: true
+  shell: java -Xms1G -Xmx1G -jar server.jar nogui
+  args:
+    chdir: /opt/minecraft
+    creates: /opt/minecraft/eula.txt
