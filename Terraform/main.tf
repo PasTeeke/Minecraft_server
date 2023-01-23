@@ -1,4 +1,4 @@
-resource "aws_vpc" "VPC_Minecraft" {
+resource "aws_vpc" "VPC_minecraft" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
@@ -7,8 +7,8 @@ resource "aws_vpc" "VPC_Minecraft" {
   }
 }
 
-resource "aws_subnet" "public_subnet_Minecraft" {
-  vpc_id            = aws_vpc.VPC_Minecraft.id
+resource "aws_subnet" "public_subnet_minecraft" {
+  vpc_id            = aws_vpc.VPC_minecraft.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = ""
   map_public_ip_on_launch = true
@@ -19,8 +19,8 @@ resource "aws_subnet" "public_subnet_Minecraft" {
   }
 }
 
-resource "aws_subnet" "private_subnet_Minecraft" {
-  vpc_id            = aws_vpc.VPC_Minecraft.id
+resource "aws_subnet" "private_subnet_minecraft" {
+  vpc_id            = aws_vpc.VPC_minecraft.id
   cidr_block        = "10.0.2.0/24"
   availability_zone = ""
   map_public_ip_on_launch = false
@@ -31,8 +31,8 @@ resource "aws_subnet" "private_subnet_Minecraft" {
   }
 }
 
-resource "aws_internet_gateway" "internet_gateway_Minecraft" {
-  vpc_id = aws_vpc.VPC_Minecraft.id
+resource "aws_internet_gateway" "internet_gateway_minecraft" {
+  vpc_id = aws_vpc.VPC_minecraft.id
 
   tags = {
       Name = "terraform_igw"
@@ -40,8 +40,8 @@ resource "aws_internet_gateway" "internet_gateway_Minecraft" {
   }
 }
 
-resource "aws_eip" "eip_Minecraft" {
-    instance = aws_instance.instance_Minecraft.id
+resource "aws_eip" "eip_minecraft" {
+    instance = aws_instance.instance_minecraft.id
     vpc = true
 
     tags = {
@@ -50,9 +50,9 @@ resource "aws_eip" "eip_Minecraft" {
   }
 }
 
-resource "aws_nat_gateway" "nat_gateway_Minecraft" {
-  allocation_id = aws_eip.eip_Minecraft.id
-  subnet_id     = aws_subnet.public_subnet_Minecraft.id
+resource "aws_nat_gateway" "nat_gateway_minecraft" {
+  allocation_id = aws_eip.eip_minecraft.id
+  subnet_id     = aws_subnet.public_subnet_minecraft.id
 
   tags = {
       Name = "terraform_nat"
@@ -60,7 +60,7 @@ resource "aws_nat_gateway" "nat_gateway_Minecraft" {
   }
 }
 
-resource "aws_instance" "instance_Minecraft" {
+resource "aws_instance" "instance_minecraft" {
   ami           = "ami-0de3167fef21b4c0d" 
   instance_type = "t3.large"
 
@@ -70,13 +70,18 @@ resource "aws_instance" "instance_Minecraft" {
   }
 }
 
-resource "aws_autoscaling_group" "autoscaling_Minecraft" {
-  name                 = "autoscaling_Minecraft"
-  launch_configuration = aws_launch_configuration.autoscaling_Minecraft.id
+resource "aws_launch_configuration" "launch_configuration_minecraft" {
+  name          = "launch_configuration_minecraft"
+  instance_type = "t3.large"
+}
+
+resource "aws_autoscaling_group" "autoscaling_minecraft" {
+  name                 = "autoscaling_minecraft"
+  launch_configuration = aws_launch_configuration.autoscaling_minecraft.id
   min_size             = 1
   max_size             = 1
   desired_capacity     = 1
-  vpc_zone_identifier  = [aws_subnet.public_subnet_Minecraft.id, aws_subnet.private_subnet_Minecraft.id]
+  vpc_zone_identifier  = [aws_subnet.public_subnet_minecraft.id, aws_subnet.private_subnet_minecraft.id]
 
   tags = {
       Name = "terraform_autoscaling"
@@ -84,11 +89,11 @@ resource "aws_autoscaling_group" "autoscaling_Minecraft" {
   }
 }
 
-resource "aws_elb" "elb_Minecraft" {
-  name               = "elb_Minecraft"
+resource "aws_elb" "elb_minecraft" {
+  name               = "elb_minecraft"
   internal           = false
-  subnets = [aws_subnet.public_subnet_Minecraft.id]
-  security_groups = [aws_security_group.elb_Minecraft.id]
+  subnets = [aws_subnet.public_subnet_minecraft.id]
+  security_groups = [aws_security_group.security_group_elb_minecraft.id]
   enable_deletion_protection = false
 
   listener {
@@ -104,14 +109,14 @@ resource "aws_elb" "elb_Minecraft" {
   }
 }
 
-resource "aws_elb_attachment" "elb_attachment_Minecraft" {
-  elb      = aws_elb.elb_Minecraft.id
-  instance = aws_instance.instance_Minecraft.id
+resource "aws_elb_attachment" "elb_attachment_minecraft" {
+  elb      = aws_elb.elb_minecraft.id
+  instance = aws_instance.instance_minecraft.id
 }
 
-resource "aws_security_group" "security_group_elb_Minecraft" {
-  name        = "security_group_elb_Minecraft"
-  description = "Security group_elb_Minecraft"
+resource "aws_security_group" "security_group_elb_minecraft" {
+  name        = "security_group_elb_minecraft"
+  description = "Security group_elb_minecraft"
 
   ingress {
     from_port   = 25565
@@ -126,17 +131,17 @@ resource "aws_security_group" "security_group_elb_Minecraft" {
   }
 }
 
-resource "aws_security_group" "allow_ssh_Minecraft" {
+resource "aws_security_group" "allow_ssh_minecraft" {
   name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
-  vpc_id      = aws_vpc.VPC_Minecraft
+  vpc_id      = aws_vpc.VPC_minecraft
 
   ingress {
     description      = "SSH from VPC"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.VPC_Minecraft.cidr_block]
+    cidr_blocks      = [aws_vpc.VPC_minecraft.cidr_block]
   }
 
   egress {
@@ -153,8 +158,8 @@ resource "aws_security_group" "allow_ssh_Minecraft" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "cloudwatch_CPU_Minecraft" {
-  alarm_name          = "alarme_CPU_Minecraft"
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_CPU_minecraft" {
+  alarm_name          = "alarme_CPU_minecraft"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "CPUUtilization"
@@ -163,9 +168,9 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_CPU_Minecraft" {
   statistic           = "Average"
   threshold           = "70"
   alarm_description   = "CPU>70%"
-  alarm_actions       = [aws_sns_topic.sns_Minecraft.arn]
+  alarm_actions       = [aws_sns_topic.sns_minecraft.arn]
   dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.autoscaling_Minecraft.name
+    AutoScalingGroupName = aws_autoscaling_group.autoscaling_minecraft.name
   }
 
   tags = {
@@ -174,8 +179,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_CPU_Minecraft" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "cloudwatch_RAM_Minecraft" {
-  alarm_name          = "alarme_RAM_Minecraft"
+resource "aws_cloudwatch_metric_alarm" "cloudwatch_RAM_minecraft" {
+  alarm_name          = "alarme_RAM_minecraft"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "MemoryUtilization"
@@ -184,9 +189,9 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_RAM_Minecraft" {
   statistic           = "Average"
   threshold           = "70"
   alarm_description   = "RAM>70%"
-  alarm_actions       = [aws_sns_topic.sns_Minecraft.arn]
+  alarm_actions       = [aws_sns_topic.sns_minecraft.arn]
   dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.autoscaling_Minecraft.name
+    AutoScalingGroupName = aws_autoscaling_group.autoscaling_minecraft.name
   }
 
   tags = {
@@ -195,8 +200,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_RAM_Minecraft" {
   }
 }
 
-resource "aws_sns_topic" "sns_Minecraft" {
-  name = "sns_Minecraft"
+resource "aws_sns_topic" "sns_minecraft" {
+  name = "sns_minecraft"
 
   tags = {
       Name = "terraform_sns"
@@ -204,15 +209,15 @@ resource "aws_sns_topic" "sns_Minecraft" {
   }
 }
 
-resource "aws_sns_topic_subscription" "sns_mail_Minecraft" {
-  topic_arn = aws_sns_topic.sns_Minecraft.arn
+resource "aws_sns_topic_subscription" "sns_mail_minecraft" {
+  topic_arn = aws_sns_topic.sns_minecraft.arn
   protocol = "email"
   endpoint = "loic.ferment@viacesi.fr"
 }
 
 
-resource "aws_s3_bucket" "s3_Minecraft" {
-  bucket = "s3_Minecraft"
+resource "aws_s3_bucket" "s3_minecraft" {
+  bucket = "s3_minecraft"
 
   tags = {
       Name = "terraform_s3"
@@ -220,9 +225,10 @@ resource "aws_s3_bucket" "s3_Minecraft" {
   }
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_Minecraft" {
+resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_minecraft" {
+  bucket = aws_s3_bucket.s3_minecraft.id
   rule {
-    id      = "bucket_lifecycle_Minecraft"
+    id      = "bucket_lifecycle_minecraft"
     status  = "Enabled"
     filter {
       prefix = "logs/"
@@ -237,27 +243,27 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_Minecraft" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "cloudwatch_bucket_rule_Minecraft" {
-  name = "cloudwatch_bucket_Minecraft"
+resource "aws_cloudwatch_event_rule" "cloudwatch_bucket_rule_minecraft" {
+  name = "cloudwatch_bucket_minecraft"
   schedule_expression = "rate(1 hour)"
 }
 
-resource "aws_cloudwatch_event_target" "cloudwatch_bucket_event_Minecraft" {
-  rule = aws_cloudwatch_event_rule.cloudwatch_bucket_rule_Minecraft.name
-  target_id = "cloudwatch_bucket_event_Minecraft"
-  arn = "arn:aws:s3:::s3_Minecraft"
+resource "aws_cloudwatch_event_target" "cloudwatch_bucket_event_minecraft" {
+  rule = aws_cloudwatch_event_rule.cloudwatch_bucket_rule_minecraft.name
+  target_id = "cloudwatch_bucket_event_minecraft"
+  arn = "arn:aws:s3:::s3_minecraft"
 }
 
-resource "aws_lambda_function" "lambda_Minecraft" {
+resource "aws_lambda_function" "lambda_minecraft" {
   filename      = "lambda_function.zip"
-  function_name = "lambda_Minecraft"
-  role          = aws_iam_role.iam_Minecraft.arn
+  function_name = "lambda_minecraft"
+  role          = aws_iam_role.iam_minecraft.arn
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.8"
 }
 
-resource "aws_iam_role" "iam_Minecraft" {
-  name = "iam_Minecraft"
+resource "aws_iam_role" "iam_minecraft" {
+  name = "iam_minecraft"
 
   assume_role_policy = <<EOF
 {
@@ -275,9 +281,9 @@ resource "aws_iam_role" "iam_Minecraft" {
 EOF
 }
 
-resource "aws_iam_role_policy" "iam_policy_Minecraft" {
-  name = "iam_policy_Minecraft"
-  role = aws_iam_role.iam_Minecraft.id
+resource "aws_iam_role_policy" "iam_policy_minecraft" {
+  name = "iam_policy_minecraft"
+  role = aws_iam_role.iam_minecraft.id
 
   policy = <<EOF
 {
@@ -290,8 +296,8 @@ resource "aws_iam_role_policy" "iam_policy_Minecraft" {
                 "s3:GetBucketLocation"
             ],
             "Resource": [
-                "arn:aws:s3:::s3_Minecraft",
-                "arn:aws:s3:::s3_Minecraft/*"
+                "arn:aws:s3:::s3_minecraft",
+                "arn:aws:s3:::s3_minecraft/*"
             ]
         }
     ]
@@ -299,8 +305,8 @@ resource "aws_iam_role_policy" "iam_policy_Minecraft" {
 EOF
 }
 
-#resource "aws_key_pair" "keypair_Minecraft" {
-#  key_name   = "keypair_Minecraft"
+#resource "aws_key_pair" "keypair_minecraft" {
+#  key_name   = "keypair_minecraft"
 #  public_key = file("PATH")
 #}
 
