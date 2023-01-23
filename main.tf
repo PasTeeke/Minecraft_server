@@ -213,4 +213,8 @@ resource "aws_s3_bucket" "s3_Minecraft" {
   }
 }
 
+resource "aws_key_pair" "keypair_Minecraft" {
+  key_name   = "keypair_Minecraft"
+  public_key = file("PATH")
+}
 
