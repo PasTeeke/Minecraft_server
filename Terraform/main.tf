@@ -61,7 +61,7 @@ resource "aws_nat_gateway" "nat_gateway_Minecraft" {
 }
 
 resource "aws_instance" "instance_Minecraft" {
-  ami           = "ami-0f948dba952971c71" 
+  ami           = "ami-0de3167fef21b4c0d" 
   instance_type = "t3.large"
 
   tags = {
