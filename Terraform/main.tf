@@ -72,7 +72,7 @@ resource "aws_instance" "instance_Minecraft" {
 
 resource "aws_autoscaling_group" "autoscaling_Minecraft" {
   name                 = "autoscaling_Minecraft"
-  launch_configuration = aws_launch_configuration.autoscaling_Minecraft.name
+  launch_configuration = aws_launch_configuration.autoscaling_Minecraft.id
   min_size             = 1
   max_size             = 1
   desired_capacity     = 1
@@ -208,11 +208,6 @@ resource "aws_sns_topic_subscription" "sns_mail_Minecraft" {
   topic_arn = aws_sns_topic.sns_Minecraft.arn
   protocol = "email"
   endpoint = "loic.ferment@viacesi.fr"
-
-  tags = {
-      Name = "terraform_sns_mail"
-      build_by = "terraform"
-  }
 }
 
 
@@ -304,8 +299,8 @@ resource "aws_iam_role_policy" "iam_policy_Minecraft" {
 EOF
 }
 
-resource "aws_key_pair" "keypair_Minecraft" {
-  key_name   = "keypair_Minecraft"
-  public_key = file("PATH")
-}
+#resource "aws_key_pair" "keypair_Minecraft" {
+#  key_name   = "keypair_Minecraft"
+#  public_key = file("PATH")
+#}
 
