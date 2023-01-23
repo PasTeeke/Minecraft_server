@@ -129,7 +129,7 @@ resource "aws_security_group" "security_group_elb_minecraft" {
 resource "aws_security_group" "allow_ssh_minecraft" {
   name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
-  vpc_id      = aws_vpc.VPC_minecraft
+  vpc_id      = aws_vpc.VPC_minecraft.id
 
   ingress {
     description      = "SSH from VPC"
