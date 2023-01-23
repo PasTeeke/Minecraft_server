@@ -29,7 +29,7 @@ resource "aws_subnet" "private_subnet_Minecraft" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "private_subnet_1"
+    Name = "private_subnet"
     build_by = "terraform"
   }
 }
@@ -152,6 +152,9 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_CPU_Minecraft" {
   threshold           = "70"
   alarm_description   = "CPU>70%"
   alarm_actions       = [aws_sns_topic.sns_Minecraft.arn]
+  dimensions = {
+    InstanceId = aws_instance.instance_Minecraft.id
+  }
 
   tags = {
       Name = "terraform_CPU"
@@ -164,7 +167,7 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_RAM_Minecraft" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "MemoryUtilization"
-  namespace           = "System/Linux"
+  namespace           = "AWS/EC2"
   period              = "120"
   statistic           = "Average"
   threshold           = "70"
