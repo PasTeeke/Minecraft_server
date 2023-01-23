@@ -225,6 +225,85 @@ resource "aws_s3_bucket" "s3_Minecraft" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_Minecraft" {
+  rule {
+    id      = "bucket_lifecycle_Minecraft"
+    status  = "Enabled"
+    filter {
+      prefix = "logs/"
+    }
+    transition {
+      days          = 30
+      storage_class = "STANDARD_IA"
+    }
+    expiration {
+      days = 60
+    }
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "cloudwatch_bucket_rule_Minecraft" {
+  name = "cloudwatch_bucket_Minecraft"
+  schedule_expression = "rate(1 hour)"
+}
+
+resource "aws_cloudwatch_event_target" "cloudwatch_bucket_event_Minecraft" {
+  rule = aws_cloudwatch_event_rule.cloudwatch_bucket_rule_Minecraft.name
+  target_id = "cloudwatch_bucket_event_Minecraft"
+  arn = "arn:aws:s3:::s3_Minecraft"
+}
+
+resource "aws_lambda_function" "lambda_Minecraft" {
+  filename      = "lambda_function.zip"
+  function_name = "lambda_Minecraft"
+  role          = aws_iam_role.iam_Minecraft.arn
+  handler       = "lambda_function.lambda_handler"
+  runtime       = "python3.8"
+}
+
+resource "aws_iam_role" "iam_Minecraft" {
+  name = "iam_Minecraft"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "iam_policy_Minecraft" {
+  name = "iam_policy_Minecraft"
+  role = aws_iam_role.iam_Minecraft.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetBucketLocation"
+            ],
+            "Resource": [
+                "arn:aws:s3:::s3_Minecraft",
+                "arn:aws:s3:::s3_Minecraft/*"
+            ]
+        }
+    ]
+}
+EOF
+}
+
 resource "aws_key_pair" "keypair_Minecraft" {
   key_name   = "keypair_Minecraft"
   public_key = file("PATH")
