@@ -143,14 +143,14 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_CPU_Minecraft" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "CPUUtilization"
-  namespace           = "AWS/EC2"
+  namespace           = "AWS/Autoscaling"
   period              = "120"
   statistic           = "Average"
   threshold           = "70"
   alarm_description   = "CPU>70%"
   alarm_actions       = [aws_sns_topic.sns_Minecraft.arn]
   dimensions = {
-    InstanceId = aws_instance.instance_Minecraft.id
+    AutoScalingGroupName = aws_autoscaling_group.autoscaling_Minecraft.name
   }
 
   tags = {
@@ -164,14 +164,14 @@ resource "aws_cloudwatch_metric_alarm" "cloudwatch_RAM_Minecraft" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "MemoryUtilization"
-  namespace           = "AWS/EC2"
+  namespace           = "AWS/Autoscaling"
   period              = "120"
   statistic           = "Average"
   threshold           = "70"
   alarm_description   = "RAM>70%"
   alarm_actions       = [aws_sns_topic.sns_Minecraft.arn]
   dimensions = {
-    InstanceId = aws_instance.instance_Minecraft.id
+    AutoScalingGroupName = aws_autoscaling_group.autoscaling_Minecraft.name
   }
 
   tags = {
