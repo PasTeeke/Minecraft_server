@@ -83,11 +83,6 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
   max_size             = 1
   desired_capacity     = 1
   vpc_zone_identifier  = [aws_subnet.public_subnet_minecraft.id, aws_subnet.private_subnet_minecraft.id]
-
-  tags = {
-      Name = "terraform_autoscaling"
-      build_by = "terraform"
-  }
 }
 
 resource "aws_elb" "elb_minecraft" {
