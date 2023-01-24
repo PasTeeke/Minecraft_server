@@ -36,3 +36,5 @@
       ec2_vpc_igw:
         state: present
         vpc_id: "{{ vpc_out.vpc.id }}"
+    - name: Write inventory file
+      include: inventory.yml

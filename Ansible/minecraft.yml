@@ -3,6 +3,11 @@
   become: yes
 
   tasks:
+  - name: "Update system"
+    apt: 
+      name: "*"
+      state: latest
+      update_cache: yes
   - name: Install java
     package:
       state: present
@@ -20,8 +25,8 @@
       state: present
       create_home: yes
       home: /var/minecraft/server/
-      name: "{{ minecraft.server.user }}"
-      group: "{{ minecraft.server.group }}"
+      name: "minecraft"
+      group: "minecraft"
 
 
 
