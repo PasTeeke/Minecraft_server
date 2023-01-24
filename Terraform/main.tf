@@ -11,7 +11,7 @@ resource "aws_vpc" "VPC_minecraft" {
 
  
 
-resource "aws_subnet" "public_subnet_minecraft" {
+resource "aws_subnet" "public_subnet_minecraft" { #route table
   vpc_id            = aws_vpc.VPC_minecraft.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = ""
@@ -113,10 +113,10 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
 
  
 
-resource "aws_elb" "elb_minecraft" {
+resource "aws_elb" "elb_minecraft" { #TYPE DE LOAD BALANCER
   name               = "elbminecraft"
-  internal           = false
-  subnets = [aws_subnet.public_subnet_minecraft.id]
+  internal           = false # NECESSAIRE ?
+  subnets = [aws_subnet.public_subnet_minecraft.id] #PRIVATE ???? PAS D'AZ  PAS DE LISTE ???
   security_groups = [aws_security_group.security_group_elb_minecraft.id]
 
  
@@ -288,103 +288,6 @@ resource "aws_s3_bucket" "s3minecraft" {
 }
 
  
-
-resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_minecraft" {
-  bucket = aws_s3_bucket.s3minecraft.id
-  rule {
-    id      = "bucket_lifecycle_minecraft"
-    status  = "Enabled"
-    filter {
-      prefix = "logs/"
-    }
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
-    }
-    expiration {
-      days = 60
-    }
-  }
-}
-
- 
-
-resource "aws_cloudwatch_event_rule" "cloudwatch_bucket_rule_minecraft" {
-  name = "cloudwatch_bucket_minecraft"
-  schedule_expression = "rate(1 hour)"
-}
-
- 
-
-resource "aws_cloudwatch_event_target" "cloudwatch_bucket_event_minecraft" {
-  rule = aws_cloudwatch_event_rule.cloudwatch_bucket_rule_minecraft.name
-  target_id = "cloudwatch_bucket_event_minecraft"
-  arn = "arn:aws:s3:::s3minecraft"
-}
-
- 
-
-resource "aws_lambda_function" "lambda_minecraft" {
-  filename      = "lambda_function.zip"
-  function_name = "lambda_minecraft"
-  role          = aws_iam_role.iam_minecraft.arn
-  handler       = "lambda_function.lambda_handler"
-  runtime       = "python3.8"
-}
-
- 
-
-resource "aws_iam_role" "iam_minecraft" {
-  name = "iam_minecraft"
-
- 
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
-}
-
- 
-
-resource "aws_iam_role_policy" "iam_policy_minecraft" {
-  name = "iam_policy_minecraft"
-  role = aws_iam_role.iam_minecraft.id
-
- 
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutObject",
-                "s3:GetBucketLocation"
-            ],
-            "Resource": [
-                "arn:aws:s3:::s3minecraft",
-                "arn:aws:s3:::s3minecraft/*"
-            ]
-        }
-    ]
-}
-EOF
-}
-
- 
-
 #resource "aws_key_pair" "keypair_minecraft" {
 #  key_name   = "keypair_minecraft"
 #  public_key = file("PATH")
