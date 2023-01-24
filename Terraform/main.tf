@@ -117,8 +117,8 @@ resource "aws_lb" "lb_minecraft" {
   name               = "lbminecraft"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = aws_security_group.security_group_elb_minecraft.id
-  subnets            = aws_subnet.public_subnet_minecraft.id
+  security_groups    = [aws_security_group.security_group_elb_minecraft.id]
+  subnets            = [aws_subnet.public_subnet_minecraft.id]
 
   enable_deletion_protection = true
 }
