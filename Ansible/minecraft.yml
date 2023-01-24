@@ -15,7 +15,7 @@
   - name: Create group
     group:
       state: present
-      name: "{{ minecraft.server.group }}"
+      name: "minecraft"
   - name: Make the minecraft directory
     file:
       state: directory
