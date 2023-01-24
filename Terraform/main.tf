@@ -14,7 +14,7 @@ resource "aws_vpc" "VPC_minecraft" {
 resource "aws_subnet" "public_subnet_minecraft" { #route table
   vpc_id            = aws_vpc.VPC_minecraft.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = ""
+  availability_zone = "us-east-1a"
   map_public_ip_on_launch = true
 
  
@@ -28,7 +28,7 @@ resource "aws_subnet" "public_subnet_minecraft" { #route table
 resource "aws_subnet" "public_subnet_2_minecraft_LB" { #route table
   vpc_id            = aws_vpc.VPC_minecraft.id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = ""
+  availability_zone = "us-east-1b"
   map_public_ip_on_launch = true
 
  
