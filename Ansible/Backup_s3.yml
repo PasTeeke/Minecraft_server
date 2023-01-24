@@ -1,13 +1,9 @@
 - name: Backup Minecraft Server
   hosts: localhost
   vars:
-    s3_bucket: "my-minecraft-backups"
+    s3_bucket: "s3minecraft"
     cloudwatch_rule_name: "minecraft-backup"
   tasks:
-  - name: Create S3 Bucket
-    s3_bucket:
-      name: "{{ s3_bucket }}"
-      state: present
   - name: Backup Minecraft Folder
     command: "aws s3 cp --recursive /minecraft s3://{{ s3_bucket }}/$(date +\%Y-\%m-\%d_\%H-\%M-\%S)"
   - name: Create CloudWatch Event Rule

@@ -1,0 +1,9 @@
+- name: Create listener for load balancer
+  elasticloadbalancingv2_listener:
+    state: present
+    load_balancer_arn: <load_balancer_arn>
+    protocol: <protocol>
+    port: <port>
+    default_action:
+      type: <default_action_type>
+      target_group_arn: <target_group_arn>
