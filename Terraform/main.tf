@@ -203,6 +203,23 @@ resource "aws_security_group" "allow_ssh_minecraft" {
     cidr_blocks      = ["0.0.0.0/0"]
   }
 
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+    tags = {
+    Name = "allow_ssh"
+    build_by = "terraform"
+  }
+}
+resource "aws_security_group" "allow_minecraft" {
+  name        = "allow_minecraft"
+  description = "Allow minecraft inbound traffic"
+  vpc_id      = aws_vpc.VPC_minecraft.id
+
   ingress {
     description      = "Minecraft from VPC"
     from_port        = 25565
@@ -219,13 +236,12 @@ resource "aws_security_group" "allow_ssh_minecraft" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
- 
-
-  tags = {
-    Name = "allow_ssh"
+    tags = {
+    Name = "allow_minecraft"
     build_by = "terraform"
   }
 }
+
 
  
 
