@@ -1,10 +1,6 @@
 all:
   hosts:
     serveur_minecraft:
-      ansible_ssh_private_key_file: "~/Workspace/test/lab2-key"
+      ansible_ssh_private_key_file: "id_rsa"
       ansible_user: "ubuntu"
-      ansible_host: "15.237.117.75"
-  children:
-    Minecraft:
-      hosts:
-        serveur_minecraft:
+      ansible_host: "184.73.237.193"

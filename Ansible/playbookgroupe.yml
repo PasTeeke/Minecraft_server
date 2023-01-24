@@ -1,0 +1,22 @@
+---
+- hosts: serveur_minecraft
+  become: yes
+  vars:
+    vpc: 
+    port:
+    group_name:
+  tasks:
+  - name: Mc docker Groupe
+    command: sudo docker run --name "{{group_name}}" -d -p "{{port}}":"{{port}}" -e EULA=TRUE openhack/minecraft-server
+  - name: Create the security group
+    ec2_group:
+      name: "{{ group_name }}"
+      description: Allow_minecraft_port
+      vpc_id: "{{ vpc }}"
+      region: us-east-1
+      rules:
+      - proto: tcp
+        ports: "{{port}}"
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow minecraft port
+      state: present
