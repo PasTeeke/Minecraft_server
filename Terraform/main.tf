@@ -34,7 +34,7 @@ resource "aws_subnet" "public_subnet_2_minecraft_LB" { #route table
  
 
   tags = {
-    Name = "public_subnet"
+    Name = "public_subnet_2"
     build_by = "terraform"
   }
 }
@@ -135,7 +135,7 @@ resource "aws_lb" "lb_minecraft" {
   internal           = false
   load_balancer_type = "network"
   security_groups    = [aws_security_group.security_group_elb_minecraft.id]
-  subnets            = [aws_subnet.public_subnet_minecraft.id, aws_subnet.public_subnet_2_minecraft_LB]
+  subnets            = [aws_subnet.public_subnet_minecraft.id, aws_subnet.public_subnet_2_minecraft_LB.id]
 
   enable_deletion_protection = true
 }
