@@ -96,7 +96,7 @@ resource "aws_instance" "instance_minecraft" {
   subnet_id = aws_subnet.public_subnet_minecraft.id
   availability_zone = "us-east-1a"
   key_name = aws_key_pair.keypair_minecraft.key_name
-  security_groups = [aws_security_group.allow_ssh_minecraft.id,aws_security_group.allow_portainer.id]
+  security_groups = [aws_security_group.allow_ssh_minecraft.id,aws_security_group.allow_portainer.id,aws_security_group.allow_minecraft.id]
 
  
 
