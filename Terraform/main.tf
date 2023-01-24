@@ -25,11 +25,25 @@ resource "aws_subnet" "public_subnet_minecraft" { #route table
   }
 }
 
+resource "aws_subnet" "public_subnet_2_minecraft_LB" { #route table
+  vpc_id            = aws_vpc.VPC_minecraft.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = ""
+  map_public_ip_on_launch = true
+
+ 
+
+  tags = {
+    Name = "public_subnet"
+    build_by = "terraform"
+  }
+}
+
  
 
 resource "aws_subnet" "private_subnet_minecraft" {
   vpc_id            = aws_vpc.VPC_minecraft.id
-  cidr_block        = "10.0.2.0/24"
+  cidr_block        = "10.0.3.0/24"
   availability_zone = ""
   map_public_ip_on_launch = false
 
@@ -84,7 +98,7 @@ resource "aws_instance" "instance_minecraft" {
   ami           = "ami-0778521d914d23bc1" 
   instance_type = "t3.large"
   subnet_id = aws_subnet.public_subnet_minecraft.id
-  ssh_key_name = aws_key_pair.keypair.key_name
+  key_name = aws_key_pair.keypair_minecraft.key_name
 
  
 
@@ -115,19 +129,19 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
 
  
 
-/*resource "aws_lb" "lb_minecraft" {
+resource "aws_lb" "lb_minecraft" {
   name               = "lbminecraft"
   internal           = false
-  load_balancer_type = "application"
+  load_balancer_type = "network"
   security_groups    = [aws_security_group.security_group_elb_minecraft.id]
-  subnets            = [aws_subnet.public_subnet_minecraft.id]
+  subnets            = [aws_subnet.public_subnet_minecraft.id, aws_subnet.public_subnet_2_minecraft_LB]
 
   enable_deletion_protection = true
 }
 
 resource "aws_lb_target_group" "targetgroup" {
   name = "test"
-  port = 80
+  port = 25565
   protocol = "TCP"
   vpc_id = aws_vpc.VPC_minecraft.id
 }
@@ -159,7 +173,7 @@ resource "aws_security_group" "security_group_elb_minecraft" {
       Name = "terraform_security_elb"
       build_by = "terraform"
   }
-}*/
+}
 
  
 
@@ -284,7 +298,7 @@ resource "aws_s3_bucket" "s3minecraft" {
  
 resource "aws_key_pair" "keypair_minecraft" {
   key_name   = "id_rsa.pub"
-  public_key = file("/home/lf/.ssh/id_rsa.pub")
+  public_key = file("~/.ssh/id_rsa.pub")
 }
 
  
