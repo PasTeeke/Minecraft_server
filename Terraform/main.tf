@@ -129,7 +129,6 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
   max_size             = 1
   desired_capacity     = 1
   vpc_zone_identifier  = [aws_subnet.public_subnet_minecraft.id, aws_subnet.private_subnet_minecraft.id]
-  availability_zone = "us-east-1a"
 }
 
  
@@ -158,7 +157,7 @@ resource "aws_lb_target_group_attachment" "tg-attachment" {
 
  
 
-resource "aws_security_group" "security_group_elb_minecraft" {
+/*resource "aws_security_group" "security_group_elb_minecraft" {
   name        = "security_group_elb_minecraft"
   description = "Security group_elb_minecraft"
   vpc_id = aws_vpc.VPC_minecraft.id
@@ -178,7 +177,7 @@ resource "aws_security_group" "security_group_elb_minecraft" {
       Name = "terraform_security_elb"
       build_by = "terraform"
   }
-}
+}*/
 
  
 
