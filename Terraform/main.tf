@@ -116,7 +116,6 @@ resource "aws_launch_configuration" "launch_configuration_minecraft" {
   name          = "launch_configuration_minecraft"
   image_id = "ami-0778521d914d23bc1"
   instance_type = "t3.large"
-  availability_zone = "us-east-1a"
 }
 
 
