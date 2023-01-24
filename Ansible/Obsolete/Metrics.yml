@@ -15,8 +15,7 @@
       statistic: Average
       threshold: 70
       alarm_description: "Alarm when CPU usage exceeds 70% for 1 minute"
-      alarm_actions:
-      "mail"
+      alarm_actions: "loic.fermet@viacesi.fr"
 
   - name: Check RAM usage
     cloudwatch_metric_alarm:
@@ -30,5 +29,4 @@
       statistic: Average
       threshold: 70
       alarm_description: "Alarm when CPU usage exceeds 70% for 1 minute"
-      alarm_actions:
-      "mail"
+      alarm_actions: "loic.fermet@viacesi.fr"
