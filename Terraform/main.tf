@@ -83,6 +83,7 @@ resource "aws_nat_gateway" "nat_gateway_minecraft" {
 resource "aws_instance" "instance_minecraft" {
   ami           = "ami-0778521d914d23bc1" 
   instance_type = "t3.large"
+  subnet_id = aws_subnet.public_subnet_minecraft
 
  
 
