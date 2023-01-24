@@ -113,34 +113,26 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
 
  
 
-resource "aws_elb" "elb_minecraft" { #TYPE DE LOAD BALANCER
-  name               = "elbminecraft"
-  internal           = false # NECESSAIRE ?
-  subnets = [aws_subnet.public_subnet_minecraft.id] #PRIVATE ???? PAS D'AZ  PAS DE LISTE ???
-  security_groups = [aws_security_group.security_group_elb_minecraft.id]
+resource "aws_lb" "lb_minecraft" {
+  name               = "lbminecraft"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = aws_security_group.security_group_elb_minecraft.id
+  subnets            = aws_subnet.public_subnet_minecraft.id
 
- 
-
-  listener {
-    instance_port     = 25565
-    instance_protocol = "tcp"
-    lb_port           = 25565
-    lb_protocol       = "tcp"
-  }
-
- 
-
-  tags = {
-      Name = "terraform_elb"
-      build_by = "terraform"
-  }
+  enable_deletion_protection = true
 }
 
- 
+resource "aws_lb_target_group" "targetgroup" {
+  name = "lbminecraft"
+  port = 25565
+  protocol = "TCP"
+  vpc_id = aws_vpc.VPC_minecraft.id
+}
 
-resource "aws_elb_attachment" "elb_attachment_minecraft" {
-  elb      = aws_elb.elb_minecraft.id
-  instance = aws_instance.instance_minecraft.id
+resource "aws_lb_target_group_attachment" "tg-attachment" {
+    target_group_arn = aws_lb_target_group.targetgroup.arn
+    target_id = aws_instance.instance_minecraft.id
 }
 
  
