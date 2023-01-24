@@ -89,19 +89,7 @@ resource "aws_eip" "eip_minecraft" {
       build_by = "terraform"
   }
 }
-/*
-resource "aws_nat_gateway" "nat_gateway_minecraft" {
-  allocation_id = aws_eip.eip_minecraft.id
-  subnet_id     = aws_subnet.public_subnet_minecraft.id
 
- 
-
-  tags = {
-      Name = "terraform_nat"
-      build_by = "terraform"
-  }
-}
-*/
 resource "aws_instance" "instance_minecraft" {
   ami           = "ami-0778521d914d23bc1" 
   instance_type = "t3.large"
@@ -161,31 +149,6 @@ resource "aws_lb_target_group_attachment" "tg-attachment" {
     target_group_arn = aws_lb_target_group.targetgroup.arn
     target_id = aws_instance.instance_minecraft.id
 }
-
- 
-
-/*resource "aws_security_group" "security_group_elb_minecraft" {
-  name        = "security_group_elb_minecraft"
-  description = "Security group_elb_minecraft"
-  vpc_id = aws_vpc.VPC_minecraft.id
-
- 
-
-  ingress {
-    from_port   = 25565
-    to_port     = 25565
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
- 
-
-  tags = {
-      Name = "terraform_security_elb"
-      build_by = "terraform"
-  }
-}*/
-
  
 
 resource "aws_security_group" "allow_ssh_minecraft" {
@@ -242,9 +205,36 @@ resource "aws_security_group" "allow_minecraft" {
   }
 }
 
-resource "aws_security_group" "allow_portainer" {
+/*resource "aws_security_group" "allow_minecraft_all" {
   name        = "allow_minecraft"
   description = "Allow minecraft inbound traffic"
+  vpc_id      = aws_vpc.VPC_minecraft.id
+
+  ingress {
+    description      = "Minecraft from VPC"
+    from_port        = 20011
+    to_port          = 20099
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+    tags = {
+    Name = "allow_minecraft_all"
+    build_by = "terraform"
+  }
+}*/
+
+resource "aws_security_group" "allow_portainer" {
+  name        = "allow_portainer"
+  description = "Allow portainer inbound traffic"
   vpc_id      = aws_vpc.VPC_minecraft.id
 
   ingress {
@@ -264,7 +254,7 @@ resource "aws_security_group" "allow_portainer" {
   }
 
     tags = {
-    Name = "allow_minecraft"
+    Name = "allow_portainer"
     build_by = "terraform"
   }
 }
