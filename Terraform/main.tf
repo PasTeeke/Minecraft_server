@@ -348,7 +348,7 @@ resource "aws_s3_bucket" "s3minecraft" {
  
 resource "aws_key_pair" "keypair_minecraft" {
   key_name   = "id_rsa.pub"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = file("/id_rsa.pub")
 }
 
  
