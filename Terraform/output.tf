@@ -10,3 +10,9 @@ output "sg-id_ssh" {
 output "sg-id_minecraft" {
   value = aws_security_group.allow_minecraft.arn
 }
+output "load_balancer" {
+  value = aws_lb.lb_minecraft.arn
+}
+output "load_balancer_target" {
+  value = aws_lb_target_group.targetgroup.arn
+}
