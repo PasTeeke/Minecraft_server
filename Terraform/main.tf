@@ -114,7 +114,7 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
 
  
 
-resource "aws_lb" "lb_minecraft" {
+/*resource "aws_lb" "lb_minecraft" {
   name               = "lbminecraft"
   internal           = false
   load_balancer_type = "application"
@@ -158,7 +158,7 @@ resource "aws_security_group" "security_group_elb_minecraft" {
       Name = "terraform_security_elb"
       build_by = "terraform"
   }
-}
+}*/
 
  
 
@@ -281,9 +281,9 @@ resource "aws_s3_bucket" "s3minecraft" {
 }
 
  
-#resource "aws_key_pair" "keypair_minecraft" {
-#  key_name   = "keypair_minecraft"
-#  public_key = file("PATH")
-#}
+resource "aws_key_pair" "keypair_minecraft" {
+  key_name   = "id_rsa.pub"
+  public_key = file("/home/lf/.ssh/id_rsa.pub")
+}
 
  
