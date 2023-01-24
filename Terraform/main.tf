@@ -108,7 +108,7 @@ resource "aws_instance" "instance_minecraft" {
   subnet_id = aws_subnet.public_subnet_minecraft.id
   availability_zone = "us-east-1a"
   key_name = aws_key_pair.keypair_minecraft.key_name
-  security_groups = [aws_security_group.allow_ssh_minecraft.id]
+  security_groups = [aws_security_group.allow_ssh_minecraft.id,aws_security_group.allow_portainer.id]
 
  
 
@@ -224,6 +224,33 @@ resource "aws_security_group" "allow_minecraft" {
     description      = "Minecraft from VPC"
     from_port        = 25565
     to_port          = 25565
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+    tags = {
+    Name = "allow_minecraft"
+    build_by = "terraform"
+  }
+}
+
+resource "aws_security_group" "allow_portainer" {
+  name        = "allow_minecraft"
+  description = "Allow minecraft inbound traffic"
+  vpc_id      = aws_vpc.VPC_minecraft.id
+
+  ingress {
+    description      = "Minecraft from VPC"
+    from_port        = 9443
+    to_port          = 9443
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
   }

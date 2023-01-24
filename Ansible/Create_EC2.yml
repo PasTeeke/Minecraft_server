@@ -6,19 +6,21 @@
 
   vars:
     region: us-east-1
-    vpc_id: vpc-12345678
-    subnet_id: subnet-abcdefgh
-    instance_type: t2.micro
-    image_id: ami-01234567890abcdefg
-    key_name: my-key-pair
-    security_group: my-security-group
-    tag_name: my-ec2-instance
+    vpc_id: 
+    subnet_id: 
+    instance_type: t3.large
+    image_id: ami-0778521d914d23bc1
+    key_name: id_rsa
+    security_group_ssh:
+    security_group_minecraft:
+    tag_name: 
   
   tasks:
     - name: Create EC2 instance
       ec2:
         key_name: "{{ key_name }}"
-        group_id: "{{ security_group }}"
+        group_id: "{{ security_group_ssh }}"
+        group_id: "{{ security_group_minecraft }}"
         instance_type: "{{ instance_type }}"
         image: "{{ image_id }}"
         wait: yes
