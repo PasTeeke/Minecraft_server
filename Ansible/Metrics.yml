@@ -1,4 +1,4 @@
-- name: Install Minecraft
+- name: Metrics Usage
   hosts: all
   become: yes
 
