@@ -99,6 +99,7 @@ resource "aws_instance" "instance_minecraft" {
   instance_type = "t3.large"
   subnet_id = aws_subnet.public_subnet_minecraft.id
   key_name = aws_key_pair.keypair_minecraft.key_name
+  security_groups = [aws_security_group.allow_ssh_minecraft.id]
 
  
 
