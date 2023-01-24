@@ -1,5 +1,7 @@
 resource "aws_vpc" "VPC_minecraft" {
   cidr_block = "10.0.0.0/16"
+  enable_dns_support  = true
+  enable_dns_hostnames = true
 
  
 
@@ -53,6 +55,12 @@ resource "aws_subnet" "private_subnet_minecraft" {
     Name = "private_subnet"
     build_by = "terraform"
   }
+}
+
+resource "aws_route" "route_minecraft"{
+    route_table_id  = aws_vpc.VPC_minecraft.default_route_table_id
+    destination_cidr_block  = "0.0.0.0/0"
+    gateway_id  = aws_internet_gateway.internet_gateway_minecraft.id
 }
 
  
