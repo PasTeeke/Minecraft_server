@@ -1,0 +1,37 @@
+- name: Install Minecraft
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Install java
+    package:
+      state: present
+      name: java-1.8.0-openjdk-headless
+  - name: Create group
+    group:
+      state: present
+      name: "{{ minecraft.server.group }}"
+  - name: Make the minecraft directory
+    file:
+      state: directory
+      path: "/var/minecraft/server"
+  - name: Create user
+    user:
+      state: present
+      create_home: yes
+      home: /var/minecraft/server/
+      name: "{{ minecraft.server.user }}"
+      group: "{{ minecraft.server.group }}"
+
+
+
+  - name: Create system service
+        template:
+          src: templates/minecraft.service
+          dest: "/etc/systemd/system/minecraft.service"
+          mode: 0644
+      - name: Start minecraft service
+        service:
+          name: minecraft
+          enabled: yes
+          state: started

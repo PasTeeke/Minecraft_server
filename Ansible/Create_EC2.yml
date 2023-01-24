@@ -1,0 +1,38 @@
+---
+- name: Deploy EC2 instance
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    region: us-east-1
+    vpc_id: vpc-12345678
+    subnet_id: subnet-abcdefgh
+    instance_type: t2.micro
+    image_id: ami-01234567890abcdefg
+    key_name: my-key-pair
+    security_group: my-security-group
+    tag_name: my-ec2-instance
+  
+  tasks:
+    - name: Create EC2 instance
+      ec2:
+        key_name: "{{ key_name }}"
+        group_id: "{{ security_group }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image_id }}"
+        wait: yes
+        region: "{{ region }}"
+        vpc_subnet_id: "{{ subnet_id }}"
+        assign_public_ip: yes
+        tags:
+          Name: "{{ tag_name }}"
+      register: ec2
+    - name: Add instance to host group
+      add_host:
+        hostname: "{{ ec2.instance.public_ip }}"
+        groupname: ec2_instances
+    - name: Create Internet Gateway
+      ec2_vpc_igw:
+        state: present
+        vpc_id: "{{ vpc_out.vpc.id }}"

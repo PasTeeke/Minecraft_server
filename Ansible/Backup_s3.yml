@@ -1,0 +1,23 @@
+- name: Backup Minecraft Server
+  hosts: localhost
+  vars:
+    s3_bucket: "my-minecraft-backups"
+    cloudwatch_rule_name: "minecraft-backup"
+  tasks:
+  - name: Create S3 Bucket
+    s3_bucket:
+      name: "{{ s3_bucket }}"
+      state: present
+  - name: Backup Minecraft Folder
+    command: "aws s3 cp --recursive /minecraft s3://{{ s3_bucket }}/$(date +\%Y-\%m-\%d_\%H-\%M-\%S)"
+  - name: Create CloudWatch Event Rule
+    cloudwatch_event_rule:
+      name: "{{ cloudwatch_rule_name }}"
+      schedule_expression: "rate(1 hour)"
+      state: present
+  - name: Create CloudWatch Event Target
+    cloudwatch_event_target:
+      rule: "{{ cloudwatch_rule_name }}"
+      target_id: "minecraft-backup-target"
+      arn: "{{ ansible_local.s3.arn }}"
+      input: '{"bucket":"{{ s3_bucket }}"}'

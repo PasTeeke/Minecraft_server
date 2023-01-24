@@ -1,0 +1,33 @@
+---
+- name: Install boto3 and botocore
+  hosts: all
+  become: yes
+  tasks:
+  - name: Install python-pip
+    package:
+      name: python-pip
+      state: present
+
+  - name: check if boto3 is installed
+    pip:
+      name: boto3
+      state: present
+    register: boto3_check
+
+  - name: check if botocore is installed
+    pip:
+      name: botocore
+      state: present
+    register: botocore_check
+
+  - name: Install boto3
+    pip:
+      name: boto3
+      state: present
+    when: boto3_check.failed
+
+  - name: Install botocore
+    pip:
+      name: botocore
+      state: present
+    when: botocore_check.failed
