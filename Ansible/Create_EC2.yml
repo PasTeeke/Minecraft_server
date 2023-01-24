@@ -13,7 +13,10 @@
     key_name: id_rsa
     security_group_ssh:
     security_group_minecraft:
-    tag_name: 
+    tag_name:
+    target_group_arn :
+    port:
+    target_group_name :
   
   tasks:
     - name: Create EC2 instance
@@ -40,3 +43,26 @@
         vpc_id: "{{ vpc_out.vpc.id }}"
     - name: Write inventory file
       include: inventory.yml
+    - name: Create target group for load balancer
+      elasticloadbalancingv2_target_group:
+      state: present
+      name: <target_group_name>
+      protocol: TCP
+      port: <port>
+      vpc_id: <vpc_id>
+    - name: Create listener for load balancer
+      elasticloadbalancingv2_listener:
+        state: present
+        load_balancer_arn: <load_balancer_arn>
+        protocol: TCP
+        port: <port>
+        default_action:
+        type: forward
+        target_group_arn: elasticloadbalancingv2_targetgroup
+    - name: Register instance with target group
+      elasticloadbalancingv2_target:
+        state: present
+        target_group_arn: elasticloadbalancingv2_targetgroup
+        id: ec2
+        port: <port>
+        availability_zone: <region>
