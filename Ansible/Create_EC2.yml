@@ -17,11 +17,13 @@
     target_group_arn :
     port:
     target_group_name :
+    groupe_name : groupe-
   
   tasks:
     - name: Create EC2 instance
       ec2:
         key_name: "{{ key_name }}"
+        groupe_name :
         group_id: "{{ security_group_ssh }}"
         group_id: "{{ security_group_minecraft }}"
         instance_type: "{{ instance_type }}"
@@ -43,6 +45,15 @@
         vpc_id: "{{ vpc_out.vpc.id }}"
     - name: Write inventory file
       include: inventory.yml
+    - name: Ajouter l'instance EC2 au groupe d'échelle automatique
+      autoscaling:
+        name: "{{ group_name }}"
+        min_size: "1"
+        max_size: "1"
+        desired_capacity: "1"
+        launch_config_name: "{{ group_name }}-config"
+        region: "{{ region }}"
+        instance_ids: "{{ ec2.instances.id }}"
     - name: Create target group for load balancer
       elasticloadbalancingv2_target_group:
       state: present
