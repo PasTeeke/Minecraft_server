@@ -27,6 +27,12 @@
       home: /var/minecraft/server/
       name: "minecraft"
       group: "minecraft"
+  - name: Write eula
+    copy:
+      content: "eula=true"
+      dest: "/var/minecraft/server/eula.txt"
+      owner: "minecraft"
+      group: "minecraft"
 
 
 
