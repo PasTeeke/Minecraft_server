@@ -203,7 +203,13 @@ resource "aws_security_group" "allow_ssh_minecraft" {
     cidr_blocks      = ["0.0.0.0/0"]
   }
 
- 
+  ingress {
+    description      = "Minecraft from VPC"
+    from_port        = 25565
+    to_port          = 25565
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
 
   egress {
     from_port        = 0
