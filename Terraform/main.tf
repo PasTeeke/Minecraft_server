@@ -116,7 +116,9 @@ resource "aws_launch_configuration" "launch_configuration_minecraft" {
   name          = "launch_configuration_minecraft"
   image_id = "ami-0778521d914d23bc1"
   instance_type = "t3.large"
+  availability_zone = "us-east-1a"
 }
+
 
  
 
@@ -127,6 +129,7 @@ resource "aws_autoscaling_group" "autoscaling_minecraft" {
   max_size             = 1
   desired_capacity     = 1
   vpc_zone_identifier  = [aws_subnet.public_subnet_minecraft.id, aws_subnet.private_subnet_minecraft.id]
+  availability_zone = "us-east-1a"
 }
 
  
